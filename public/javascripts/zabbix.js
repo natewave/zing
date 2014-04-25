@@ -178,20 +178,22 @@ zabbix.addEntry = function(url) {
     };
 
     $.ajax({
-      type: "POST",
-      url: zabbix.endpoint,
-      data: JSON.stringify(dataCheck),
-      contentType:"application/json; charset=utf-8"
-    }).done(function( result ) {
-        $.ajax({
           type: "POST",
           url: zabbix.endpoint,
           data: JSON.stringify(data),
           contentType:"application/json; charset=utf-8"
         }).done(function( result ) {
-           window.location = "/";  
+            $.ajax({
+              type: "POST",
+              url: zabbix.endpoint,
+              data: JSON.stringify(dataCheck),
+              contentType:"application/json; charset=utf-8"
+            }).done(function( result ) {
+                window.location = "/";
+            });
         });
-    });
+
+    
 
 //     {"jsonrpc":"2.0","error":{"code":-32602,"message":"Invalid params.","data":"Application with ID \"502\" is not available on \"Zabbix server\"."},"id":1}nse@nizars-mbp-2: /Applications
 // $ curl -i -X POST -H 'Content-Type:application/json' -d'{"jsonrpc": "2.0","method":"item.create","params":{"key_":"grpavg[\"zenping\",\"curl.httptime[https://prismic.io/]\",last,0]","name":"avg.curl.httptime[https://prismic.io/]", "hostid": "10084", "type":7, "value_type": 0, "interfaceid": "", "applications": ["503"], "delay" : 30  }, "id":1, "auth": "cd193ca9d5d453e5179a9c74a0e07bdd"}' http://zabbix.0x50.net/zabbix/api_jsonrpc.php
