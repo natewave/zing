@@ -9,7 +9,7 @@ import play.api.data.Forms._
 
 object Application extends Controller with Security {
 
-    val u = "api"
+    val u = "admin"
     val p = "Aith5eenaiph"
 
     def index = isAuthenticated { implicit user => implicit request =>
