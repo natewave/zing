@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, u: Option[String], p: Option[String])(content: Html)
 
 <!DOCTYPE html>
 
@@ -12,12 +12,16 @@
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
     </head>
     <body>
-        <div class="ui orange inverted menu">
+        <div class="ui blue inverted menu">
           <a class="item">Dashboard</a>
           <a class="item">Add App</a>
           <div class="right menu">
-            <a class="item" href="/login">Login</a>
-            <a class="item">Help</a>
+            @u.map { user =>
+                <a class="item">Welcome, @u</a>
+                <a class="item" href="/logout">Logout</a>
+            }.getOrElse {
+                <a class="item" href="/login">Login</a>
+            }
           </div>
         </div>
 
@@ -27,5 +31,9 @@
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/semantic.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/zabbix.js")" type="text/javascript"></script>
+
+        <div id="footer">
+            Copyright © 1969 - 2014 Zengularity.com
+        </div>
     </body>
 </html>
