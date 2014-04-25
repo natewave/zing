@@ -25,8 +25,8 @@ zabbix.login = function (username, password) {
       contentType:"application/json; charset=utf-8"
     }).done(function( user ) {
         zabbix.user = user.result;
-        var app = $("#app");
-        app.append("Welcome, " + zabbix.user.alias + " (sessionId: " + zabbix.user.sessionid + ")");
+        // var app = $("#app");
+        // app.append("Welcome, " + zabbix.user.alias + " (sessionId: " + zabbix.user.sessionid + ")");
         console.log( "Data Saved: ", user);
     });
 };
