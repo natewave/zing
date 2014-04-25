@@ -50,4 +50,8 @@ object Application extends Controller with Security {
     Redirect(routes.Application.login).withNewSession.flashing("success" -> "You have been logged out successfully.")
   }
 
+  def addEntry = isAuthenticated { implicit user => implicit request =>
+    Ok(views.html.addEntry("Add Entry", Some(u), Some(p)))
+  }
+
 }

@@ -33,6 +33,10 @@ zabbix.login = function (username, password) {
     });
 };
 
+zabbix.templateid = "10084";
+
+zabbix.login("api", "Keikie0t");
+
 zabbix.getItems = function(user) {
 
     var user = user || zabbix.user;
@@ -40,7 +44,7 @@ zabbix.getItems = function(user) {
         "jsonrpc": "2.0",
         "method": "item.getobjects",
         "params": {
-            "host": "hackday-the-agent"
+            "host": "Zabbix server"
         },
         "id": 1,
         "auth": user.sessionid
@@ -52,13 +56,15 @@ zabbix.getItems = function(user) {
       data: JSON.stringify(data),
       contentType:"application/json; charset=utf-8"
     }).done(function( items ) {
+
         zabbix.items = _.filter(items.result, function(item) {
-            return item.key_.indexOf("curl.httptime") === 0;
+            return item.name.indexOf("avg.curl") === 0;
         });
         console.log(zabbix.items);
 
         var itemsTable = $("#itemsbody");
-        _.each(zabbix.items, function(item, index) {            
+        _.each(zabbix.items, function(item, index) {
+            console.log("item ITEEEEEM", item);  
             zabbix.getItemHistory(item, index);
 
             var statusIcon = (item.lastvalue < "400") ? "<i class='ui green checkmark icon'></i>" : "<i class='ui red attention icon'></i>"
@@ -124,10 +130,76 @@ zabbix.getItemHistory = function(itemId, index) {
         }
 
         var myNewChart = new Chart(ctx).Line(data);
-
-        console.log(zabbix.items[index].uphistory);
     });
 
 };
 
-zabbix.login("api", "Keikie0t");
+zabbix.addEntry = function(url) {
+    var user = zabbix.user;
+
+    var key = ['grpavg["zenping","curl.httptime['+url+']",last,0]', 'curl.httptime['+url+']'];
+    var name = ["avg.curl.httptime["+url+"]", "httptime:"+url];
+    var applications = ["503", "502"];
+    var type = [8, 7];
+    var hostid = ["10084", "10108"];
+
+    var data = {
+        "jsonrpc": "2.0",
+        "method": "item.create",
+        "params": {
+            "key_": key[0],
+            "name": name[0],
+            "hostid": hostid[0],
+            "type":type[0],
+            "value_type": 0,
+            "interfaceid": "",
+            "applications": [applications[0]],
+            "delay" : 10
+        },
+        "id": 1,
+        "auth": user.sessionid
+    };
+
+    var dataCheck = {
+        "jsonrpc": "2.0",
+        "method": "item.create",
+        "params": {
+            "key_": key[1],
+            "name": name[1],
+            "hostid": hostid[1],
+            "type":type[1],
+            "value_type": 0,
+            "interfaceid": "",
+            "applications": [applications[1]],
+            "delay" : 10
+        },
+        "id": 1,
+        "auth": user.sessionid
+    };
+
+    $.ajax({
+      type: "POST",
+      url: zabbix.endpoint,
+      data: JSON.stringify(dataCheck),
+      contentType:"application/json; charset=utf-8"
+    }).done(function( result ) {
+        $.ajax({
+          type: "POST",
+          url: zabbix.endpoint,
+          data: JSON.stringify(data),
+          contentType:"application/json; charset=utf-8"
+        }).done(function( result ) {
+           window.location = "/";  
+        });
+    });
+
+//     {"jsonrpc":"2.0","error":{"code":-32602,"message":"Invalid params.","data":"Application with ID \"502\" is not available on \"Zabbix server\"."},"id":1}nse@nizars-mbp-2: /Applications
+// $ curl -i -X POST -H 'Content-Type:application/json' -d'{"jsonrpc": "2.0","method":"item.create","params":{"key_":"grpavg[\"zenping\",\"curl.httptime[https://prismic.io/]\",last,0]","name":"avg.curl.httptime[https://prismic.io/]", "hostid": "10084", "type":7, "value_type": 0, "interfaceid": "", "applications": ["503"], "delay" : 30  }, "id":1, "auth": "cd193ca9d5d453e5179a9c74a0e07bdd"}' http://zabbix.0x50.net/zabbix/api_jsonrpc.php
+}
+
+var addEntryBtn = $("#addEntryBtn");
+
+addEntryBtn.on("click", function() {
+    var url = $("#entryURL").val();
+    zabbix.addEntry(url);
+});

@@ -1,0 +1,18 @@
+@(message: String, u: Option[String], p: Option[String])
+
+@main("Zing - Login", u, p) {
+    <h1><i class="ui ambulance icon"></i>Add entry</h1>
+
+    <div class="ui form segment">
+      <div class="field">
+        <label>URL</label>
+        <div class="ui left labeled icon input">
+          <input type="text" placeholder="URL to check" id="entryURL">
+          <div class="ui corner label">
+            <i class="icon asterisk"></i>
+          </div>
+        </div>
+      </div>
+      <div class="ui blue submit button" id="addEntryBtn"><i class="ui add icon"></i>Add</div>
+    </div>
+}
